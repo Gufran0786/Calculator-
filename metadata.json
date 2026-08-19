@@ -1,0 +1,8 @@
+{
+  "name": "Remix  Calculator Plus",
+  "description": "Scientific Calculator with algebraic equation solver, unit conversion, 2D graph plotting, voice input, calculation history, and math & science constants.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
