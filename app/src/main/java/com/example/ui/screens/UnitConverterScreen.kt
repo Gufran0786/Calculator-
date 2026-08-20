@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -36,6 +38,7 @@ fun UnitConverterScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -59,7 +62,8 @@ fun UnitConverterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // Category Selector Horizontal Carousel
@@ -160,13 +164,15 @@ fun UnitConverterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Dedicated Conversion Numeric Keypad
+            // Dedicated Conversion Numeric Keypad with prominent "0" button
             ConversionKeypad(
                 onKeyPressed = { viewModel.onKeyPadInput(it) },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -376,8 +382,8 @@ private fun ConversionKeypad(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(bottom = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val rows = listOf(
             listOf("7", "8", "9", "⌫"),
@@ -389,28 +395,31 @@ private fun ConversionKeypad(
         rows.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 row.forEach { key ->
                     Surface(
                         onClick = { onKeyPressed(key) },
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         color = when (key) {
-                            "C", "⌫" -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f)
+                            "0" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                            "C", "⌫" -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)
                             "±", "100" -> MaterialTheme.colorScheme.primaryContainer
                             else -> MaterialTheme.colorScheme.surfaceVariant
                         },
+                        border = if (key == "0") androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)) else null,
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp)
+                            .height(52.dp)
                             .testTag("converter_key_$key")
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
                                 text = key,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                fontSize = if (key == "100" || key == "00") 17.sp else 20.sp,
+                                fontWeight = if (key == "0") FontWeight.Bold else FontWeight.SemiBold,
                                 color = when (key) {
+                                    "0" -> MaterialTheme.colorScheme.primary
                                     "C", "⌫" -> MaterialTheme.colorScheme.onErrorContainer
                                     "±", "100" -> MaterialTheme.colorScheme.onPrimaryContainer
                                     else -> MaterialTheme.colorScheme.onSurface

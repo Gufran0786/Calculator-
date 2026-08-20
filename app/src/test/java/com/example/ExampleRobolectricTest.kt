@@ -81,4 +81,33 @@ class ExampleRobolectricTest {
         assertEquals(0f, vm.uiState.value.bubbleOffsetX, 0.001f)
         assertEquals(0f, vm.uiState.value.bubbleOffsetY, 0.001f)
     }
+
+    @Test
+    fun `test converter keypad zero input and formatting`() {
+        val vm = com.example.ui.viewmodel.UnitConverterViewModel()
+        vm.onKeyPadInput("C")
+        assertEquals("0", vm.uiState.value.inputValue)
+
+        vm.onKeyPadInput("0")
+        assertEquals("0", vm.uiState.value.inputValue)
+
+        vm.onKeyPadInput("5")
+        assertEquals("5", vm.uiState.value.inputValue)
+
+        vm.onKeyPadInput("0")
+        assertEquals("50", vm.uiState.value.inputValue)
+
+        vm.onKeyPadInput("00")
+        assertEquals("5000", vm.uiState.value.inputValue)
+    }
+
+    @Test
+    fun `test settings language selection`() {
+        val vm = com.example.ui.viewmodel.SettingsViewModel()
+        assertEquals(com.example.ui.viewmodel.AppLanguage.ENGLISH, vm.uiState.value.selectedLanguage)
+
+        vm.setLanguage(com.example.ui.viewmodel.AppLanguage.HINDI)
+        assertEquals(com.example.ui.viewmodel.AppLanguage.HINDI, vm.uiState.value.selectedLanguage)
+        assertEquals("हिंदी", vm.uiState.value.selectedLanguage.nativeName)
+    }
 }
